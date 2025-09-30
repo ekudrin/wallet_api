@@ -6,6 +6,7 @@ from sqlalchemy import create_engine
 import sqlalchemy as sa
 import databases
 from pydantic import BaseModel
+from models import Wallet
 from typing import Optional
 from uuid import UUID
 from contextlib import asynccontextmanager
@@ -18,10 +19,7 @@ engine = sa.create_engine(DATABASE_URL)
 sessionmaker = sa.orm.sessionmaker(bind=engine)
 SessionLocal = sessionmaker()
 
-class Wallet(sa.Table):
-    __tablename__ = "wallet"
-    id = sa.Column(sa.String(length=36), primary_key=True)
-    balance = sa.Column(sa.Float, nullable=False)
+
 
 app = FastAPI()
 
@@ -38,7 +36,7 @@ class OperationRequest(BaseModel):
     amount: float
 
 def get_session() -> Session:
-    return SessionLocal()
+    return SessionLocal
 
 @app.post('/api/v1/wallets/{wallet_uuid}/operation')
 async def wallet_operation(wallet_uuid: UUID, request_data: OperationRequest):
@@ -65,10 +63,10 @@ async def wallet_operation(wallet_uuid: UUID, request_data: OperationRequest):
 
     return {'message': f"{request_data.operation_type.capitalize()} successful"}
 
-@app.get("api/v1/wallets/{wallet_uuid}")
+@app.get("/api/v1/wallets/{wallet_uuid}")
 async def get_wallet_balance(wallet_uuid: UUID):
     with get_session() as db:
         wallet = db.query(Wallet).filter_by(id=str(wallet_uuid)).first()
         if not wallet:
             raise HTTPException(status_code=404, detail="Счет с таким номером не найден")
-        return {"balabce": wallet.balance}
+        return {"balance": wallet.balance}
