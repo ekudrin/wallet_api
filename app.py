@@ -1,17 +1,16 @@
 from enum import Enum
-import os
-from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
-from sqlalchemy.orm import Session
+from uuid import UUID
+
 import databases
 import sqlalchemy as sa
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
 from models import Wallet
-from uuid import UUID
 
 DATABASE_URL = "postgresql://postgres:password@db:5432/wallet_db"
 database = databases.Database(DATABASE_URL)
-metadata = sa.MetaData()
 engine = sa.create_engine(DATABASE_URL)
 sessionmaker = sa.orm.sessionmaker(bind=engine)
 SessionLocal = sessionmaker()
