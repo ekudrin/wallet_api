@@ -7,23 +7,23 @@ client = TestClient(app)
 
 def test_deposit():
     response = client.post(
-        "/api/v1/wallets/fake-wallet-id/operation/",
+        "/api/v1/wallets/f9a25c1d-d24a-437b-bcf2-12d41a3438a2/operation/",
         data=json.dumps({"operation_type": "DEPOSIT", "amount": 100})
     )
     assert response.status_code == 200
-    assert response.json()["message"] == "Deposit successful."
+    assert response.json()["message"] == "Deposit successful"
 
 
 def test_withdraw():
     response = client.post(
-        "/api/v1/wallets/fake-wallet-id/operation/",
+        "/api/v1/wallets/f9a25c1d-d24a-437b-bcf2-12d41a3438a2/operation/",
         data=json.dumps({"operation_type": "WITHDRAW", "amount": 50})
     )
     assert response.status_code == 200
-    assert response.json()["message"] == "Withdraw successful."
+    assert response.json()["message"] == "Withdraw successful"
 
 
 def test_get_balance():
-    response = client.get("/api/v1/wallets/fake-wallet-id")
+    response = client.get("/api/v1/wallets/f9a25c1d-d24a-437b-bcf2-12d41a3438a2")
     assert response.status_code == 200
     assert isinstance(response.json()["balance"], float)
