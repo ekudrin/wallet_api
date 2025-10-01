@@ -1,4 +1,6 @@
 from enum import Enum
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from sqlalchemy.orm import Session
 import databases
@@ -57,10 +59,12 @@ async def wallet_operation(wallet_uuid: UUID, request_data: OperationRequest):
                     raise HTTPException(status_code=500, detail="Недостаточно средств для проведения операции")
 
             db.commit()
+        except HTTPException as he:
+            raise he
 
         except Exception as e:
             db.rollback()
-            raise HTTPException(status_code=500, detail="Ошибка при попытке провести транзакцию")
+            raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
     return {'message': f"{request_data.operation_type.capitalize()} successful"}
 
